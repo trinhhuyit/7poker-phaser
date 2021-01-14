@@ -262,7 +262,6 @@ class GameScene extends Phaser.Scene {
   public handleWinEffect = (result) => {
     const { group, withJokers } = result;
     const includesCardsIds = map(group, '_id');
-    console.log('includesCardsIds', includesCardsIds);
     const includedCards = filter(this.cards, (card) =>
       includes(includesCardsIds, card._id),
     );
@@ -288,7 +287,6 @@ class GameScene extends Phaser.Scene {
     } else if (this.turn === 4) {
       result = this.cardsService.checkResult(7);
     }
-    console.log('result', result);
     if (result) {
       const reward = this.getReward(result);
       this.txtResult.text = `You got ${reward}`;

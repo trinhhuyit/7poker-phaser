@@ -70,7 +70,6 @@ class LoadScene extends Phaser.Scene {
       );
     });
     this.load.on('complete', (value) => {
-      console.log('START');
       this.scene.manager.start('GameScene');
     });
     this.load.start();
