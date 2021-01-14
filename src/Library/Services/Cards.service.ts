@@ -16,7 +16,11 @@ import {
   map,
   minBy,
   concat,
+  take,
+  last,
 } from 'lodash';
+
+import { generate } from 'shortid';
 import Card from '../Components/Card.component';
 const ALL_SUITS = ['of_clubs', 'of_diamonds', 'of_hearts', 'of_spades'];
 const ALL_JOKER_SUITS = ['black', 'red'];
@@ -39,6 +43,7 @@ interface CardData {
   kind: string;
   suit: string;
   value?: number;
+  _id: string;
 }
 class CardsService {
   public cardsData: CardData[] = [];
@@ -54,24 +59,29 @@ class CardsService {
       kind: newKind,
       suit: allSuits[random(0, size(allSuits) - 1)],
       value: this.correctKind(newKind),
+      _id: generate(),
     };
   };
 
   public generateCardData = () => {
     this.cardsData = [];
     while (true) {
-      const cardData = this.randomKindSuit();
+      const rndData = this.randomKindSuit();
       if (
-        !some(this.cardsData, (currentCard) => isEqual(currentCard, cardData))
+        !some(this.cardsData, (currentCard) => {
+          return (
+            rndData.kind === currentCard.kind &&
+            rndData.suit === currentCard.suit
+          );
+        })
       ) {
-        this.cardsData.push(cardData);
+        this.cardsData.push(rndData);
       }
       if (size(this.cardsData) === this.totalCards) {
         break;
       }
     }
-    const result = this.checkResult();
-    console.log('checkResult', result);
+    const finalResult = this.checkResult(size(this.cardsData));
   };
 
   public getJokers(cardsData: CardData[]) {
@@ -197,12 +207,6 @@ class CardsService {
         (seq, elem, index, arr) => {
           const prevValue = arr[index - 1]?.value;
           const prevCompareValue = elem?.value - 1;
-          console.log({
-            prevValue,
-            index,
-            prevCompareValue,
-            elem,
-          });
           const seqId = size(seq) - 1;
           const currentSeq = seq[seqId];
           if (index && prevValue !== prevCompareValue) {
@@ -215,7 +219,6 @@ class CardsService {
       ),
       (group) => size(group) >= 5,
     );
-    console.log('result', result);
   };
   public checkStraightWithJoker = (
     cardsData: CardData[],
@@ -226,6 +229,7 @@ class CardsService {
       const allCombos = this.getComboByTotal(cardsData, leftCards);
       for (let j = 0; j < allCombos.length; j++) {
         const combo = allCombos[j];
+        if (!this.checkStraight(combo)) continue;
         const minValCard = minBy(combo, (card) => card?.value);
         const minVal = minValCard?.value;
 
@@ -238,58 +242,28 @@ class CardsService {
     }
   };
 
-  public checkResult = () => {
+  public checkResult = (totalCards: number) => {
     // of_clubs', 'of_diamonds', 'of_hearts', 'of_spades'
     // const cardsData = [
-    // {
-    //   kind: '10',
-    //   suit: 'of_clubs',
-    //   value: 10,
-    // },
-    // {
-    //   kind: '1',
-    //   suit: 'of_clubs',
-    //   value: 1,
-    // },
-    // {
-    //   kind: '5',
-    //   suit: 'of_diamonds',
-    //   value: 5,
-    // },
-    // {
-    //   kind: '3',
-    //   suit: 'of_hearts',
-    //   value: 3,
-    // },
-    // {
-    //   kind: '5',
-    //   suit: 'of_spades',
-    //   value: 5,
-    // },
-    // {
-    //   kind: '7',
-    //   suit: 'of_clubs',
-    //   value: 7,
-    // },
-    // {
-    //   kind: 'jack',
-    //   suit: 'of_hearts',
-    //   value: 11,
-    // },
-    // {
-    //   kind: 'queen',
-    //   suit: 'of_clubs',
-    //   value: 12,
-    // },
-    // {
-    //   kind: '2',
-    //   suit: 'of_hearts',
-    //   value: 2,
-    // },
     //   {
-    //     kind: 'joker',
-    //     suit: 'black',
-    //     value: -1,
+    //     kind: '9',
+    //     suit: 'of_diamonds',
+    //     value: 9,
+    //   },
+    //   {
+    //     kind: '9',
+    //     suit: 'of_hearts',
+    //     value: 9,
+    //   },
+    //   {
+    //     kind: 'queen',
+    //     suit: 'of_clubs',
+    //     value: 12,
+    //   },
+    //   {
+    //     kind: 'king',
+    //     suit: 'of_spades',
+    //     value: 13,
     //   },
     //   {
     //     kind: 'joker',
@@ -301,7 +275,7 @@ class CardsService {
     //9,J,Q,K
     //J,Q,1
     //1,1,1
-    const cardsData = this.cardsData;
+    const cardsData = take(this.cardsData, totalCards);
     const cleanedJokerCardsData = this.cleanJokerCardsData(cardsData);
 
     const enhancedAceCardsData = this.enhanceAceCardsData(
@@ -318,7 +292,6 @@ class CardsService {
     if (!isEmpty(maxKindsGroup)) {
       const { gSize, group } = maxKindsGroup;
       if (gSize === 5) {
-        console.log('FiveOfAKind');
         return {
           withJokers: totalJokers,
           group,
@@ -333,11 +306,12 @@ class CardsService {
       this.checkStraight(group),
     );
     if (royalFlushGroup) {
-      console.log('RoyalFlush');
+      const isRoyalFlush = last(royalFlushGroup).value === 14;
+
       return {
         withJokers: totalJokers,
         group: royalFlushGroup,
-        isRoyalFlush: true,
+        ...(isRoyalFlush ? { isRoyalFlush: true } : { isStraightFlush: true }),
       };
     }
 
@@ -352,10 +326,11 @@ class CardsService {
       return false;
     });
     if (isRoyalFlushWithJoker) {
+      const isRoyalFlush = last(royalFlushWithJoker).value === 14;
       return {
         withJokers: totalJokers,
         group: royalFlushWithJoker,
-        isRoyalFlushWithJoker,
+        ...(isRoyalFlush ? { isRoyalFlush: true } : { isStraightFlush: true }),
       };
     }
 
@@ -385,10 +360,7 @@ class CardsService {
           if (totalGSize >= 5 && totalUseJokers <= totalJokers) {
             return {
               withJokers: totalUseJokers,
-              group: {
-                set1: set1?.group,
-                set2: set2?.group,
-              },
+              group: concat(set1?.group, set2?.group),
               isFullHouse: true,
             };
           }
@@ -404,10 +376,7 @@ class CardsService {
           if (totalGSize >= 5 && totalUseJokers <= totalJokers) {
             return {
               withJokers: totalUseJokers,
-              group: {
-                set1: set1?.group,
-                set2: set2?.group,
-              },
+              group: concat(set1?.group, set2?.group),
               isFullHouse: true,
             };
           }
@@ -431,6 +400,7 @@ class CardsService {
 
     //Straight
     const allStraightCombos = this.getComboByTotal(enhancedAceCardsData, 5);
+
     for (let i = 0; i < size(allStraightCombos); i++) {
       const combo = allStraightCombos[i];
       const isStraight = this.checkStraight(combo);

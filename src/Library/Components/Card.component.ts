@@ -3,17 +3,21 @@ class Card extends Phaser.GameObjects.Sprite {
   public kind: string; //1,2,3,4,5,6,7,8,9,J,Q,K //joker
   public isFaceDown: boolean;
   public currentFrame: string;
-  constructor({ scene, x, y, suit, kind, isFaceDown }) {
+  public _id: string;
+  constructor({ scene, x, y, suit, kind, isFaceDown, _id }) {
     super(scene, x, y, 'cards', '');
 
     this.scale = 0.5;
+    this._id = _id;
     this.isFaceDown = isFaceDown;
-    this.updateSuitAndKind({ suit, kind });
+    this.updateSuitAndKind({ suit, kind, _id });
     this.updateFrame();
   }
-  public updateSuitAndKind({ suit, kind }) {
+  public updateSuitAndKind({ suit, kind, _id }) {
     this.suit = suit;
     this.kind = kind;
+    this._id = _id;
+    this.isFaceDown = true;
   }
   public updateFrame = () => {
     this.currentFrame = `${this.kind}_${this.suit}.png`;
