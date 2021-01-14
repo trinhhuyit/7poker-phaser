@@ -6,7 +6,7 @@ import GameScene from './Scenes/GameScene';
 import { Plugin as NineSlicePlugin } from 'phaser3-nineslice';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
-  title: 'AdCap',
+  title: '7pk',
   type: Phaser.AUTO,
   scale: {
     mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH,

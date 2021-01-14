@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "adcap-phaser",
+      "name": "7pk-phaser",
       "cwd": "./",
       "script": "npm start",
       "watch": false,
