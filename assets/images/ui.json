@@ -1,0 +1,54 @@
+{
+"frames": [
+	{
+		"filename":"business_icon_outline.png", 
+		"frame": {"x":222, "y":373, "w":148, "h":148},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"investment-button.png", 
+		"frame": {"x":0, "y":373, "w":221, "h":97},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"investment-buy-bg.png", 
+		"frame": {"x":0, "y":0, "w":434, "h":131},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"investment-frame-bg.png", 
+		"frame": {"x":371, "y":408, "w":144, "h":144},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"investment-frame.png", 
+		"frame": {"x":371, "y":259, "w":148, "h":148},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"investment-progress-bg.png", 
+		"frame": {"x":0, "y":318, "w":319, "h":54},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"investment-progress-frame.png", 
+		"frame": {"x":0, "y":259, "w":323, "h":58},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"investments_locked_dashed.png", 
+		"frame": {"x":0, "y":132, "w":423, "h":126},
+		"anchor": {"x":0,"y":1}
+	},
+	{
+		"filename":"null.png", 
+		"frame": {"x":424, "y":132, "w":100, "h":100},
+		"anchor": {"x":0,"y":1}
+	}
+
+],
+"meta": {
+	"size": {"w": 525, "h": 553},
+	"scale": "1"
+}
+}

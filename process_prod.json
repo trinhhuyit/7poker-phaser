@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "name": "adcap-phaser",
+      "cwd": "./",
+      "script": "npm start",
+      "watch": false,
+      "env": { "DEBUG_COLORS": true }
+    }
+  ]
+}
