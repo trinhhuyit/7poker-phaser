@@ -28,6 +28,7 @@
     "express": "^4.17.1",
     "lodash": "^4.17.20",
     "phaser": "^3.24.1",
-    "phaser3-nineslice": "^0.5.0"
+    "phaser3-nineslice": "^0.5.0",
+    "shortid": "^2.2.16"
   }
 }
